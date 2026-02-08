@@ -21,5 +21,6 @@ class Ticket(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-
+    status = Column(String, nullable=False, default="open")
+    
     owner = relationship("User")

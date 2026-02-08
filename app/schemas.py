@@ -24,7 +24,13 @@ class TicketOut(BaseModel):
     id: int
     title: str
     description: str | None
+    status: str
     user_id: int
 
     class Config:
         from_attributes = True
+
+class TicketUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    status: str | None = None
