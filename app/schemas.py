@@ -13,3 +13,18 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True  # allows SQLAlchemy -> Pydantic conversion
+
+class TicketCreate(BaseModel):
+    title: str
+    description: str | None = None
+    user_id: int
+
+
+class TicketOut(BaseModel):
+    id: int
+    title: str
+    description: str | None
+    user_id: int
+
+    class Config:
+        from_attributes = True
