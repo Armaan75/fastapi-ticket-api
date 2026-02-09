@@ -1,5 +1,8 @@
 from pydantic import BaseModel, EmailStr
+from typing import Literal
 
+
+TicketStatus = Literal["open", "in_progress", "resolved"]
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -24,7 +27,7 @@ class TicketOut(BaseModel):
     id: int
     title: str
     description: str | None
-    status: str
+    status: TicketStatus
     user_id: int
 
     class Config:
@@ -33,4 +36,4 @@ class TicketOut(BaseModel):
 class TicketUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
-    status: str | None = None
+    status: TicketStatus | None = None
