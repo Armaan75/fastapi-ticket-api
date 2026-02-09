@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Literal
+from pydantic import ConfigDict
+
 
 
 TicketStatus = Literal["open", "in_progress", "resolved"]
@@ -14,8 +16,8 @@ class UserOut(BaseModel):
     email: EmailStr
     full_name: str | None = None
 
-    class Config:
-        from_attributes = True  # allows SQLAlchemy -> Pydantic conversion
+    model_config = ConfigDict(from_attributes=True)
+
 
 class TicketCreate(BaseModel):
     title: str
@@ -30,8 +32,7 @@ class TicketOut(BaseModel):
     status: TicketStatus
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class TicketUpdate(BaseModel):
     title: str | None = None
