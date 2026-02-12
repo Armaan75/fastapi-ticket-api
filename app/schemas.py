@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Literal
 from pydantic import ConfigDict
+from pydantic import Field
 
 
 
@@ -9,6 +10,7 @@ TicketStatus = Literal["open", "in_progress", "resolved"]
 class UserCreate(BaseModel):
     email: EmailStr
     full_name: str | None = None
+    password: str = Field(min_length=8, max_length=72)
 
 
 class UserOut(BaseModel):
@@ -18,6 +20,9 @@ class UserOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
 
 class TicketCreate(BaseModel):
     title: str
