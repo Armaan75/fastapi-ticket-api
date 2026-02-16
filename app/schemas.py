@@ -2,8 +2,7 @@ from pydantic import BaseModel, EmailStr
 from typing import Literal
 from pydantic import ConfigDict
 from pydantic import Field
-
-
+from datetime import datetime
 
 TicketStatus = Literal["open", "in_progress", "resolved"]
 
@@ -34,8 +33,10 @@ class TicketOut(BaseModel):
     description: str | None
     status: TicketStatus
     user_id: int
-
     model_config = ConfigDict(from_attributes=True)
+    created_at: datetime
+    updated_at: datetime
+
 
 class TicketUpdate(BaseModel):
     title: str | None = None

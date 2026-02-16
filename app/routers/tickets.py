@@ -32,14 +32,23 @@ def create_ticket(
 def list_tickets(
     status: str | None = None,
     user_id: int | None = None,
+    limit: int = 20,
+    offset: int = 0,
     db: Session = Depends(get_db),
 ):
     query = db.query(Ticket)
+
     if status:
         query = query.filter(Ticket.status == status)
     if user_id:
         query = query.filter(Ticket.user_id == user_id)
-    return query.all()
+
+    return (
+        query.order_by(Ticket.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
 
 
 @router.patch("/{ticket_id}", response_model=TicketOut)
