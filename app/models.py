@@ -16,7 +16,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import DateTime
-from datetime import datetime
+from datetime import datetime, UTC
 
 
 class Ticket(Base):
@@ -28,6 +28,6 @@ class Ticket(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     status = Column(String, nullable=False, default="open")
     owner = relationship("User")
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime,default=lambda: datetime.now(UTC), onupdate=datetime.now(UTC), nullable=False)
 
