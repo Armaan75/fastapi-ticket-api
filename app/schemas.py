@@ -27,8 +27,6 @@ class LoginRequest(BaseModel):
 class TicketCreate(BaseModel):
     title: str
     description: str | None = None
-    user_id: int
-
 
 class TicketOut(BaseModel):
     id: int

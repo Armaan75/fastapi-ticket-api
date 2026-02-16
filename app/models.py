@@ -9,6 +9,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     full_name = Column(String, nullable=True)
     password_hash = Column(String, nullable=False)
+    auth_token = Column(String, unique=True, index=True, nullable=True)
 
 
 from sqlalchemy import ForeignKey

@@ -4,16 +4,23 @@ from sqlalchemy.orm import Session
 from ..db import get_db
 from ..models import Ticket
 from ..schemas import TicketCreate, TicketOut, TicketUpdate
+from ..auth import get_current_user
+from ..models import User
+
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 
 @router.post("", response_model=TicketOut)
-def create_ticket(payload: TicketCreate, db: Session = Depends(get_db)):
+def create_ticket(
+    payload: TicketCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     ticket = Ticket(
         title=payload.title,
         description=payload.description,
-        user_id=payload.user_id,
+        user_id=current_user.id,
     )
     db.add(ticket)
     db.commit()

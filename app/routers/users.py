@@ -6,6 +6,8 @@ from ..db import get_db
 from ..models import User
 from ..schemas import UserCreate, UserOut, LoginRequest
 from ..security import hash_password, verify_password
+from ..security import hash_password, verify_password, create_token
+
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -32,10 +34,13 @@ def create_user(payload: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email).first()
-    if not user:
+    if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    if not verify_password(payload.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    # create + save token
+    token = create_token()
+    user.auth_token = token
+    db.commit()
+    db.refresh(user)
 
-    return {"message": "Login successful", "user_id": user.id}
+    return {"access_token": token, "token_type": "bearer"}

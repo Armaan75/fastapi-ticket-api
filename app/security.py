@@ -9,3 +9,8 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+import secrets
+
+def create_token() -> str:
+    return secrets.token_urlsafe(32)
