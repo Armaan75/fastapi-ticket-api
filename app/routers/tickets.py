@@ -43,10 +43,18 @@ def list_tickets(
 
 
 @router.patch("/{ticket_id}", response_model=TicketOut)
-def update_ticket(ticket_id: int, payload: TicketUpdate, db: Session = Depends(get_db)):
+def update_ticket(
+    ticket_id: int,
+    payload: TicketUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found")
+
+    if ticket.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not allowed")
 
     if payload.title is not None:
         ticket.title = payload.title
@@ -59,6 +67,7 @@ def update_ticket(ticket_id: int, payload: TicketUpdate, db: Session = Depends(g
     db.refresh(ticket)
     return ticket
 
+
 @router.get("/{ticket_id}", response_model=TicketOut)
 def get_ticket(ticket_id: int, db: Session = Depends(get_db)):
     ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
@@ -67,10 +76,17 @@ def get_ticket(ticket_id: int, db: Session = Depends(get_db)):
     return ticket
 
 @router.delete("/{ticket_id}")
-def delete_ticket(ticket_id: int, db: Session = Depends(get_db)):
+def delete_ticket(
+    ticket_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
     if not ticket:
         raise HTTPException(status_code=404, detail="Ticket not found")
+
+    if ticket.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not allowed")
 
     db.delete(ticket)
     db.commit()
