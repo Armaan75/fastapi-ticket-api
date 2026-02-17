@@ -4,3 +4,4 @@ sqlalchemy
 pytest
 passlib[bcrypt]
 httpx
+email-validator
