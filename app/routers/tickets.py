@@ -2,12 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..db import get_db
-from ..models import Ticket
-from ..schemas import TicketCreate, TicketOut, TicketUpdate
+from ..models import Ticket, User
+from ..schemas import TicketCreate, TicketOut, TicketUpdate, TicketListResponse
 from ..auth import get_current_user
-from ..models import User
 from ..services import tickets_service
+from sqlalchemy import func
 
+from fastapi import Query
+
+limit: int = Query(20, ge=1, le=100)
+offset: int = Query(0, ge=0)
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
@@ -18,24 +22,18 @@ def create_ticket(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    ticket = Ticket(
-        title=payload.title,
-        description=payload.description,
-        user_id=current_user.id,
-    )
-    db.add(ticket)
-    db.commit()
-    db.refresh(ticket)
     return tickets_service.create_ticket(db, payload, current_user)
 
 
+from fastapi import Query
 
-@router.get("", response_model=list[TicketOut])
+@router.get("", response_model=TicketListResponse)
 def list_tickets(
     status: str | None = None,
     user_id: int | None = None,
-    limit: int = 20,
-    offset: int = 0,
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    sort: str = "-created_at",
     db: Session = Depends(get_db),
 ):
     query = db.query(Ticket)
@@ -45,8 +43,21 @@ def list_tickets(
     if user_id:
         query = query.filter(Ticket.user_id == user_id)
 
-    return tickets_service.get_ticket(db, ticket_id)
+    total = query.with_entities(func.count(Ticket.id)).scalar() or 0
 
+    allowed = {"created_at", "updated_at", "priority", "status", "title", "id"}
+    desc_order = sort.startswith("-")
+    field = sort[1:] if desc_order else sort
+
+    if field not in allowed:
+        raise HTTPException(status_code=400, detail=f"Invalid sort field: {field}")
+
+    sort_col = getattr(Ticket, field)
+    query = query.order_by(sort_col.desc() if desc_order else sort_col.asc())
+
+    items = query.offset(offset).limit(limit).all()
+
+    return {"items": items, "limit": limit, "offset": offset, "total": total}
 
 
 @router.patch("/{ticket_id}", response_model=TicketOut)
