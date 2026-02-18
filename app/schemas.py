@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Literal
+from typing import Literal, List
 from pydantic import ConfigDict
 from pydantic import Field
 from datetime import datetime
@@ -42,3 +42,9 @@ class TicketUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
     status: TicketStatus | None = None
+
+class TicketListResponse(BaseModel):
+    items: List["TicketOut"]
+    limit: int
+    offset: int
+    total: int
