@@ -48,3 +48,15 @@ class TicketListResponse(BaseModel):
     limit: int
     offset: int
     total: int
+
+from enum import Enum
+
+class TicketStatus(str, Enum):
+    open = "open"
+    in_progress = "in_progress"
+    closed = "closed"
+
+class TicketPriority(str, Enum):
+    low = "low"
+    medium = "medium"
+    high = "high"
