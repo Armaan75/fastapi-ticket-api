@@ -3,12 +3,13 @@ from sqlalchemy.orm import Session
 
 from ..db import get_db
 from ..models import Ticket, User
-from ..schemas import TicketCreate, TicketOut, TicketUpdate, TicketListResponse
+from ..schemas import TicketCreate, TicketOut, TicketUpdate, TicketListResponse, TicketStatus, TicketPriority
 from ..auth import get_current_user
 from ..services import tickets_service
 from sqlalchemy import func
 
 from fastapi import Query
+from sqlalchemy import or_
 
 limit: int = Query(20, ge=1, le=100)
 offset: int = Query(0, ge=0)
@@ -29,19 +30,35 @@ from fastapi import Query
 
 @router.get("", response_model=TicketListResponse)
 def list_tickets(
-    status: str | None = None,
+    status: TicketStatus | None = None,
+    priority: TicketPriority | None = None,
     user_id: int | None = None,
+    q: str | None = None,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     sort: str = "-created_at",
     db: Session = Depends(get_db),
 ):
+
     query = db.query(Ticket)
 
     if status:
-        query = query.filter(Ticket.status == status)
+        query = query.filter(Ticket.status == status.value)
+
+    if priority:
+        query = query.filter(Ticket.priority == priority.value)
+
     if user_id:
         query = query.filter(Ticket.user_id == user_id)
+
+    if q:
+        q_like = f"%{q.strip()}%"
+        query = query.filter(
+        or_(
+            Ticket.title.ilike(q_like),
+            Ticket.description.ilike(q_like),
+        )
+    )
 
     total = query.with_entities(func.count(Ticket.id)).scalar() or 0
 
