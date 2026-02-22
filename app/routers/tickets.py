@@ -1,18 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func, or_
 
 from ..db import get_db
 from ..models import Ticket, User
-from ..schemas import TicketCreate, TicketOut, TicketUpdate, TicketListResponse, TicketStatus, TicketPriority
+from ..schemas import (
+    TicketCreate,
+    TicketOut,
+    TicketUpdate,
+    TicketListResponse,
+    TicketStatus,
+    TicketPriority,
+)
 from ..auth import get_current_user
 from ..services import tickets_service
-from sqlalchemy import func
-
-from fastapi import Query
-from sqlalchemy import or_
-
-limit: int = Query(20, ge=1, le=100)
-offset: int = Query(0, ge=0)
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
@@ -26,21 +27,19 @@ def create_ticket(
     return tickets_service.create_ticket(db, payload, current_user)
 
 
-from fastapi import Query
-
 @router.get("", response_model=TicketListResponse)
 def list_tickets(
     status: TicketStatus | None = None,
     priority: TicketPriority | None = None,
-    user_id: int | None = None,
     q: str | None = None,
     limit: int = Query(20, ge=1, le=100),
-    offset: int = Query(0, ge=0),
+    skip: int = Query(0, ge=0),
     sort: str = "-created_at",
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-
-    query = db.query(Ticket)
+    # Only show current user's tickets
+    query = db.query(Ticket).filter(Ticket.user_id == current_user.id)
 
     if status:
         query = query.filter(Ticket.status == status.value)
@@ -48,17 +47,14 @@ def list_tickets(
     if priority:
         query = query.filter(Ticket.priority == priority.value)
 
-    if user_id:
-        query = query.filter(Ticket.user_id == user_id)
-
     if q:
         q_like = f"%{q.strip()}%"
         query = query.filter(
-        or_(
-            Ticket.title.ilike(q_like),
-            Ticket.description.ilike(q_like),
+            or_(
+                Ticket.title.ilike(q_like),
+                Ticket.description.ilike(q_like),
+            )
         )
-    )
 
     total = query.with_entities(func.count(Ticket.id)).scalar() or 0
 
@@ -72,9 +68,20 @@ def list_tickets(
     sort_col = getattr(Ticket, field)
     query = query.order_by(sort_col.desc() if desc_order else sort_col.asc())
 
-    items = query.offset(offset).limit(limit).all()
+    items = query.offset(skip).limit(limit).all()
 
-    return {"items": items, "limit": limit, "offset": offset, "total": total}
+    return {"items": items, "limit": limit, "skip": skip, "total": total}
+
+
+@router.get("/{ticket_id}", response_model=TicketOut)
+def get_ticket(
+    ticket_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    ticket = tickets_service.get_ticket(db, ticket_id)
+    tickets_service.assert_owner(ticket, current_user)
+    return ticket
 
 
 @router.patch("/{ticket_id}", response_model=TicketOut)
@@ -84,36 +91,10 @@ def update_ticket(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-
-    if ticket.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
-
-    if payload.title is not None:
-        ticket.title = payload.title
-    if payload.description is not None:
-        ticket.description = payload.description
-    if payload.status is not None:
-        ticket.status = payload.status.value
-    if payload.priority is not None:
-        ticket.priority = payload.priority.value
-
-    db.commit()
-    db.refresh(ticket)
     ticket = tickets_service.get_ticket(db, ticket_id)
     tickets_service.assert_owner(ticket, current_user)
     return tickets_service.update_ticket(db, ticket, payload)
 
-
-
-@router.get("/{ticket_id}", response_model=TicketOut)
-def get_ticket(ticket_id: int, db: Session = Depends(get_db)):
-    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-    return tickets_service.get_ticket(db, ticket_id)
 
 @router.delete("/{ticket_id}")
 def delete_ticket(
@@ -121,16 +102,6 @@ def delete_ticket(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-
-    if ticket.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
-
-    db.delete(ticket)
-    db.commit()
     ticket = tickets_service.get_ticket(db, ticket_id)
     tickets_service.assert_owner(ticket, current_user)
     return tickets_service.delete_ticket(db, ticket)
-
