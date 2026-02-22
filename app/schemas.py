@@ -1,14 +1,14 @@
-from pydantic import BaseModel, EmailStr
-from typing import Literal, List
-from pydantic import ConfigDict
-from pydantic import Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from datetime import datetime
 from enum import Enum
+from typing import List
+
 
 class TicketStatus(str, Enum):
     open = "open"
     in_progress = "in_progress"
     resolved = "resolved"
+
 
 class TicketPriority(str, Enum):
     low = "low"
@@ -29,22 +29,25 @@ class UserOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
 
 class TicketCreate(BaseModel):
     title: str
     description: str | None = None
     priority: TicketPriority = TicketPriority.medium
 
+
 class TicketOut(BaseModel):
     id: int
     title: str
     description: str | None
     status: TicketStatus
+    priority: TicketPriority
     user_id: int
-    model_config = ConfigDict(from_attributes=True)
     created_at: datetime
     updated_at: datetime
 
@@ -57,8 +60,9 @@ class TicketUpdate(BaseModel):
     status: TicketStatus | None = None
     priority: TicketPriority | None = None
 
+
 class TicketListResponse(BaseModel):
-    items: List["TicketOut"]
+    items: List[TicketOut]
     limit: int
-    offset: int
+    skip: int
     total: int
