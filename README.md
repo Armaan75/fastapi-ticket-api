@@ -88,7 +88,6 @@ GET /tickets?status=open&priority=high&q=login&limit=5&offset=0&sort=-id
 
 ### Structured Response Format
 
-```json
 {
   "items": [...],
   "limit": 5,
@@ -118,7 +117,7 @@ fastapi-ticket-api/
 ├── requirements.txt
 └── README.md
 
-▶️ Running Locally
+### ▶️ Running Locally
 
 git clone https://github.com/YOUR_USERNAME/fastapi-ticket-api.git
 cd fastapi-ticket-api
@@ -130,13 +129,11 @@ pip install -r requirements.txt
 
 uvicorn app.main:app --reload
 
-
-Open Swagger UI:
+### Open Swagger UI:
 
 http://127.0.0.1:8000/docs
 
-
-🧪 Continuous Integration
+### 🧪 Continuous Integration
 
 This project uses GitHub Actions to:
 
@@ -147,9 +144,9 @@ This project uses GitHub Actions to:
 
 All features are developed using:
 
-1. Feature branches
-2. Pull Requests
-3. CI validation before merge
+- Feature branches
+- Pull Requests
+- CI validation before merge
 
 🔮 Planned Improvements
 
