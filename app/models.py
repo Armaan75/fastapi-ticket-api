@@ -14,7 +14,7 @@ class User(Base):
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy import DateTime
 from datetime import datetime, UTC
 
@@ -30,4 +30,5 @@ class Ticket(Base):
     owner = relationship("User")
     created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
     updated_at = Column(DateTime,default=lambda: datetime.now(UTC), onupdate=datetime.now(UTC), nullable=False)
+    priority = Column(String, nullable=False, default="medium")
 

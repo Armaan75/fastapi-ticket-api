@@ -96,7 +96,9 @@ def update_ticket(
     if payload.description is not None:
         ticket.description = payload.description
     if payload.status is not None:
-        ticket.status = payload.status
+        ticket.status = payload.status.value
+    if payload.priority is not None:
+        ticket.priority = payload.priority.value
 
     db.commit()
     db.refresh(ticket)
