@@ -1,4 +1,8 @@
-from sqlalchemy import Column, Integer, String
+from datetime import datetime, UTC
+
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+
 from .db import Base
 
 
@@ -12,23 +16,23 @@ class User(Base):
     auth_token = Column(String, unique=True, index=True, nullable=True)
 
 
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy import DateTime
-from datetime import datetime, UTC
-
-
 class Ticket(Base):
     __tablename__ = "tickets"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    status = Column(String, nullable=False, default="open")
+
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User")
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
-    updated_at = Column(DateTime,default=lambda: datetime.now(UTC), onupdate=datetime.now(UTC), nullable=False)
+
+    status = Column(String, nullable=False, default="open")
     priority = Column(String, nullable=False, default="medium")
 
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
