@@ -171,7 +171,7 @@ Users can only view and modify their own tickets.
 
 GitHub Actions automatically runs:
 ```bash
-pyest
+pytest
 ```
 on every push to ensure the application remains stable.
 
@@ -180,7 +180,7 @@ on every push to ensure the application remains stable.
 
 Possible extensions for this project:
 
-👥 Team / organization ticket support
+👥 Team / Organisation ticket support
 
 🔑 Role-based permissions
 
