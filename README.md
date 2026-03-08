@@ -107,7 +107,7 @@ Run the development server
 uvicorn app.main:app --reload
 ```
 
-📖 API Documentation
+# 📖 API Documentation
 
 Once the server is running, open:
 
@@ -116,7 +116,7 @@ http://127.0.0.1:8000/docs
 FastAPI automatically provides an interactive Swagger UI where you can test all endpoints.
 
 
-🧪 Running Tests
+# 🧪 Running Tests
 
 Run the full test suite:
 ```bash
@@ -133,7 +133,7 @@ search functionality
 
 sorting validation
 
-📌 Example Endpoint
+# 📌 Example Endpoint
 
 Get tickets with pagination:
 
@@ -155,7 +155,7 @@ Example response:
   "total": 10
 }
 ```
-🔐 Security
+# 🔐 Security
 
 This API implements:
 
@@ -167,7 +167,7 @@ restricted access to user resources
 
 Users can only view and modify their own tickets.
 
-🔁 Continuous Integration
+# 🔁 Continuous Integration
 
 GitHub Actions automatically runs:
 ```bash
@@ -176,7 +176,7 @@ pyest
 on every push to ensure the application remains stable.
 
 
-📈 Future Improvements
+# 📈 Future Improvements
 
 Possible extensions for this project:
 
