@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, or_
 
 from ..db import get_db
-from ..models import Ticket, User
+from ..models import User
 from ..schemas import (
     TicketCreate,
     TicketOut,
@@ -38,39 +37,16 @@ def list_tickets(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # Only show current user's tickets
-    query = db.query(Ticket).filter(Ticket.user_id == current_user.id)
-
-    if status:
-        query = query.filter(Ticket.status == status.value)
-
-    if priority:
-        query = query.filter(Ticket.priority == priority.value)
-
-    if q:
-        q_like = f"%{q.strip()}%"
-        query = query.filter(
-            or_(
-                Ticket.title.ilike(q_like),
-                Ticket.description.ilike(q_like),
-            )
-        )
-
-    total = query.with_entities(func.count(Ticket.id)).scalar() or 0
-
-    allowed = {"created_at", "updated_at", "priority", "status", "title", "id"}
-    desc_order = sort.startswith("-")
-    field = sort[1:] if desc_order else sort
-
-    if field not in allowed:
-        raise HTTPException(status_code=400, detail=f"Invalid sort field: {field}")
-
-    sort_col = getattr(Ticket, field)
-    query = query.order_by(sort_col.desc() if desc_order else sort_col.asc())
-
-    items = query.offset(skip).limit(limit).all()
-
-    return {"items": items, "limit": limit, "skip": skip, "total": total}
+    return tickets_service.list_tickets(
+        db=db,
+        current_user=current_user,
+        status=status,
+        priority=priority,
+        q=q,
+        limit=limit,
+        skip=skip,
+        sort=sort,
+    )
 
 
 @router.get("/{ticket_id}", response_model=TicketOut)
