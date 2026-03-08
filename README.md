@@ -1,10 +1,16 @@
 # 🎫 FastAPI Ticket API
 
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![Tests](https://img.shields.io/badge/tests-pytest-blue)
+![CI](https://img.shields.io/badge/CI-GitHub%20Actions-success)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 A **production-style backend API** for managing support tickets.
 
 Built using **FastAPI, SQLAlchemy, and Python**, this project demonstrates clean backend architecture including authentication, pagination, filtering, automated testing, and CI.
 
-This project is designed as a **backend portfolio project** that showcases best practices used in real backend systems.
+This repository serves as a **backend portfolio project** showcasing real-world backend engineering practices.
 
 ---
 
@@ -20,7 +26,7 @@ This project is designed as a **backend portfolio project** that showcases best 
 ✅ Sorting support  
 ✅ Automated tests with Pytest  
 ✅ Continuous Integration with GitHub Actions  
-✅ Environment-based configuration  
+✅ Environment-based configuration
 
 ---
 
@@ -82,21 +88,25 @@ This mirrors real production backend architecture.
 # ⚙️ Installation
 
 Clone the repository
-
 ```bash
 git clone https://github.com/Armaan75/fastapi-ticket-api.git
+```
 
 Navigate into the project
-
+```bash
 cd fastapi-ticket-api
+```
 
 Install dependencies
-
+```bash
 pip install -r requirements.txt
+```
 
 Run the development server
-
+```bash
 uvicorn app.main:app --reload
+```
+
 📖 API Documentation
 
 Once the server is running, open:
@@ -105,11 +115,13 @@ http://127.0.0.1:8000/docs
 
 FastAPI automatically provides an interactive Swagger UI where you can test all endpoints.
 
+
 🧪 Running Tests
 
 Run the full test suite:
-
+```bash
 pytest
+```
 
 Tests cover:
 
@@ -128,7 +140,7 @@ Get tickets with pagination:
 GET /tickets?skip=0&limit=5
 
 Example response:
-
+```bash
 {
   "items": [
     {
@@ -142,6 +154,7 @@ Example response:
   "skip": 0,
   "total": 10
 }
+```
 🔐 Security
 
 This API implements:
@@ -157,10 +170,11 @@ Users can only view and modify their own tickets.
 🔁 Continuous Integration
 
 GitHub Actions automatically runs:
-
-pytest
-
+```bash
+pyest
+```
 on every push to ensure the application remains stable.
+
 
 📈 Future Improvements
 
