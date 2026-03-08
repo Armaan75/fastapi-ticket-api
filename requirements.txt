@@ -6,3 +6,4 @@ passlib[bcrypt]
 httpx
 email-validator
 bcrypt<4.1
+pydantic-settings
