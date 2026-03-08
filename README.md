@@ -6,6 +6,10 @@
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions-success)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+## 🌐 Live API
+
+https://fastapi-ticket-api.onrender.com/docs
+
 A **production-style backend API** for managing support tickets.
 
 Built using **FastAPI, SQLAlchemy, and Python**, this project demonstrates clean backend architecture including authentication, pagination, filtering, automated testing, and CI.
@@ -140,7 +144,7 @@ Get tickets with pagination:
 GET /tickets?skip=0&limit=5
 
 Example response:
-```bash
+```json
 {
   "items": [
     {
