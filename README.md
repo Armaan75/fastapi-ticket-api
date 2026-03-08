@@ -1,157 +1,179 @@
-# 🚀 FastAPI Ticket API
+# 🎫 FastAPI Ticket API
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
-![CI](https://img.shields.io/badge/CI-GitHub%20Actions-success)
-![Status](https://img.shields.io/badge/Project-Active-brightgreen)
+A **production-style backend API** for managing support tickets.
 
-A production-style REST API built with **FastAPI**, designed to simulate a real-world ticket management backend.
+Built using **FastAPI, SQLAlchemy, and Python**, this project demonstrates clean backend architecture including authentication, pagination, filtering, automated testing, and CI.
 
-This project demonstrates:
-
-- Clean API architecture  
-- JWT authentication  
-- Filtering, pagination & sorting  
-- Professional Git workflow (feature branches + PRs)  
-- CI integration with GitHub Actions  
+This project is designed as a **backend portfolio project** that showcases best practices used in real backend systems.
 
 ---
 
-## 📌 Project Overview
+# 🚀 Features
 
-The **FastAPI Ticket API** allows authenticated users to create and manage support tickets.
-
-It follows production-style backend principles:
-
-- Layered architecture  
-- Dependency injection  
-- Ownership validation  
-- Structured API responses  
-- Feature-branch workflow with CI checks  
-
-This project is being built incrementally using production practices.
-
----
-
-## 🧱 Tech Stack
-
-- **FastAPI**
-- **SQLAlchemy**
-- **Pydantic**
-- **JWT Authentication**
-- **SQLite** (PostgreSQL-ready)
-- **Uvicorn**
-- **GitHub Actions (CI/CD)**
+✅ User authentication  
+✅ Token-based authorization  
+✅ Ticket CRUD operations  
+✅ Ticket ownership protection  
+✅ Pagination support  
+✅ Filtering by priority and status  
+✅ Search functionality  
+✅ Sorting support  
+✅ Automated tests with Pytest  
+✅ Continuous Integration with GitHub Actions  
+✅ Environment-based configuration  
 
 ---
 
-## 🔐 Authentication
+# 🛠 Tech Stack
 
-- JWT-based login
-- Protected endpoints using FastAPI dependencies
-- Ticket ownership validation for update/delete operations
+### Backend
+
+🐍 Python  
+⚡ FastAPI  
+🗄 SQLAlchemy  
+
+### Validation
+
+📦 Pydantic  
+
+### Testing
+
+🧪 Pytest  
+
+### DevOps
+
+🔁 GitHub Actions (CI)
 
 ---
 
-## 🎟 Ticket API Features
-
-### CRUD Operations
-
-- Create Ticket  
-- Retrieve Single Ticket  
-- Update Ticket  
-- Delete Ticket  
-
-### Pagination
-
-GET /tickets?limit=10&offset=0
-
-### Sorting
-
-GET /tickets?sort=-created_at
-GET /tickets?sort=priority
-
-### Filtering
-
-GET /tickets?status=open
-GET /tickets?priority=high
-GET /tickets?user_id=1
-
-### Search
-
-GET /tickets?q=bug
-
-### Combined Example
-
-GET /tickets?status=open&priority=high&q=login&limit=5&offset=0&sort=-id
+# 📂 Project Structure
 
 
-### Structured Response Format
-
-{
-  "items": [...],
-  "limit": 5,
-  "offset": 0,
-  "total": 12
-}
-
-🗂 Project Structure
-
-fastapi-ticket-api/
+app/
+├── core/
+│ └── config.py
 │
-├── app/
-│   ├── main.py
-│   ├── db.py
-│   ├── models.py
-│   ├── schemas.py
-│   ├── auth.py
-│   ├── tickets.py
-│   └── services/
-│       └── tickets_service.py
+├── routers/
+│ └── tickets.py
 │
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+├── services/
+│ └── tickets_service.py
 │
-├── tests/
-├── requirements.txt
-└── README.md
+├── auth.py
+├── db.py
+├── main.py
+├── models.py
+└── schemas.py
 
-### ▶️ Running Locally
+tests/
 
-git clone https://github.com/YOUR_USERNAME/fastapi-ticket-api.git
+
+This structure separates responsibilities clearly:
+
+- **Routers** → HTTP endpoints  
+- **Services** → business logic  
+- **Models** → database structure  
+- **Schemas** → request/response validation  
+
+This mirrors real production backend architecture.
+
+---
+
+# ⚙️ Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/Armaan75/fastapi-ticket-api.git
+
+Navigate into the project
+
 cd fastapi-ticket-api
 
-python -m venv venv
-venv\Scripts\activate   # Windows
+Install dependencies
 
 pip install -r requirements.txt
 
-uvicorn app.main:app --reload
+Run the development server
 
-### Open Swagger UI:
+uvicorn app.main:app --reload
+📖 API Documentation
+
+Once the server is running, open:
 
 http://127.0.0.1:8000/docs
 
-### 🧪 Continuous Integration
+FastAPI automatically provides an interactive Swagger UI where you can test all endpoints.
 
-This project uses GitHub Actions to:
+🧪 Running Tests
 
-- Run automated checks
-- Validate builds
-- Protect the main branch
-- Enforce PR-based merges
+Run the full test suite:
 
-All features are developed using:
+pytest
 
-- Feature branches
-- Pull Requests
-- CI validation before merge
+Tests cover:
 
-🔮 Planned Improvements
+ticket pagination
 
-- Role-based permissions (Admin vs User)
-- Docker containerisation
-- Alembic database migrations
-- Expanded automated test coverage
-- Production deployment
+ticket filtering
+
+search functionality
+
+sorting validation
+
+📌 Example Endpoint
+
+Get tickets with pagination:
+
+GET /tickets?skip=0&limit=5
+
+Example response:
+
+{
+  "items": [
+    {
+      "id": 1,
+      "title": "Bug: login issue",
+      "priority": "high",
+      "status": "open"
+    }
+  ],
+  "limit": 5,
+  "skip": 0,
+  "total": 10
+}
+🔐 Security
+
+This API implements:
+
+token-based authentication
+
+ticket ownership protection
+
+restricted access to user resources
+
+Users can only view and modify their own tickets.
+
+🔁 Continuous Integration
+
+GitHub Actions automatically runs:
+
+pytest
+
+on every push to ensure the application remains stable.
+
+📈 Future Improvements
+
+Possible extensions for this project:
+
+👥 Team / organization ticket support
+
+🔑 Role-based permissions
+
+📧 Email notifications
+
+📊 Ticket analytics
+
+🐳 Docker containerization
+
+🌐 Frontend dashboard
